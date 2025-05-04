@@ -12,7 +12,7 @@ image_size = 64
 batch_size = 32
 latent_dims = 128
 epochs = 3000
-save_interval = 1000
+save_interval = 100
 log_path = "outputs/loss_log.csv"
 image_dir = '/media/ssd/congren/camelyonpatch/d02_r0p938c15/train/T_A_64'
 
