@@ -10,10 +10,11 @@ from torch.utils.data import DataLoader
 
 image_size = 64
 batch_size = 32
-latent_dims = 128
+latent_dims = 256
 epochs = 3000
 save_interval = 100
 lr = 1e-4
+cuda = 1
 
 image_dir = '/media/ssd/congren/camelyonpatch/d02_r0p938c15/train/T_A_64'
 save_dir = "/media/ssd/congren/outputs"
@@ -28,7 +29,7 @@ transform = transforms.Compose([
 train = Camelyonpatch(image_dir=image_dir, transform=transform)
 train_loader = DataLoader(train, batch_size=batch_size, shuffle=True)
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+device = torch.device(f"cuda:{cuda}" if torch.cuda.is_available() else "cpu")
 model = VAE(in_channels=3, latent_dims=latent_dims).to(device)
 optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=epochs)
@@ -59,13 +60,15 @@ def train_vae(model, dataloader, epochs):
             loss.backward()
 
             optimizer.step()
+            total_recon_loss += recon_loss.item()
+            total_kl_loss += kl_loss.item()
             total_loss += loss.item()
 
         scheduler.step()
 
         avg_loss = total_loss / len(dataloader.dataset)
-        avg_recon_loss = recon_loss.item() / len(dataloader.dataset)
-        avg_kl_loss = kl_loss.item() / len(dataloader.dataset)
+        avg_recon_loss = total_recon_loss / len(dataloader.dataset)
+        avg_kl_loss = total_kl_loss / len(dataloader.dataset)
 
         current_lr = scheduler.get_last_lr()[0]
         print(f"Epoch [{epoch+1}/{epochs}], Recon Loss: {avg_recon_loss:.4f}, KL Loss: {avg_kl_loss:.4f}, Total Loss: {avg_loss:.4f}, LR: {current_lr:.6f}")
@@ -92,6 +95,7 @@ def train_vae(model, dataloader, epochs):
 
 
 log_file = open(log_path, "w")
+log_file.write(f"Using Device: {device}, Batch Size: {batch_size}, Latent Dims: {latent_dims}, Learning Rate: {lr}\n")
 log_file.write("epoch,recon_loss,kl_loss,total_loss,learning_rate\n")
 train_vae(model, train_loader, epochs=epochs)
 log_file.close()
