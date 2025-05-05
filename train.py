@@ -10,11 +10,11 @@ from torch.utils.data import DataLoader
 
 image_size = 64
 batch_size = 32
-latent_dims = 256
+latent_dims = 128
 epochs = 3000
 save_interval = 100
 lr = 1e-4
-cuda = 1
+cuda = 0
 
 image_dir = '/media/ssd/congren/camelyonpatch/d02_r0p938c15/train/T_A_64'
 save_dir = "/media/ssd/congren/outputs"
@@ -73,7 +73,7 @@ def train_vae(model, dataloader, epochs):
         current_lr = scheduler.get_last_lr()[0]
         print(f"Epoch [{epoch+1}/{epochs}], Recon Loss: {avg_recon_loss:.4f}, KL Loss: {avg_kl_loss:.4f}, Total Loss: {avg_loss:.4f}, LR: {current_lr:.6f}")
         
-        log_file.write(f"{epoch+1}, {avg_recon_loss:.4f}, {avg_kl_loss:.4f}, {avg_loss:.4f}, {current_lr:.6f}\n")
+        log_file.write(f"{epoch+1},{avg_recon_loss:.4f},{avg_kl_loss:.4f},{avg_loss:.4f},{current_lr:.6f}\n")
         log_file.flush()
 
         # Save reconstructed images
