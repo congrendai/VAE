@@ -42,15 +42,14 @@ class VAEEncoder(nn.Module):
             conv_block(512, 1024),
         )
         # Define fully connected layers for mean and log-variance
-        self.mu = nn.Linear(1024, latent_dims)
-        self.logvar = nn.Linear(1024, latent_dims)
+        self.mu = nn.Linear(1024 * 4 * 4, latent_dims)
+        self.logvar = nn.Linear(1024 * 4 * 4, latent_dims)
     
     def forward(self, x):
         # breakpoint()
         bs = x.shape[0]
         x = self.conv_layers(x)
-        x = x.reshape(bs, 1024, -1)
-        x = x.mean(dim=-1)  # Global average pooling
+        x = x.reshape(bs, -1)  # Flatten the output
         mu = self.mu(x)
         logvar = self.logvar(x)
         return (mu, logvar)
