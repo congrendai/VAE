@@ -28,7 +28,9 @@ vae.eval()
 val_transform = transforms.Compose([
     transforms.Resize((image_size, image_size)),  # Resize as needed
     transforms.ToTensor(),
+    transforms.Normalize(mean=[0.5]*3, std=[0.5]*3)  # Normalize to [-1, 1]
 ])
+
 # Dataloader for validation set
 val_dataset = Camelyonpatch(image_dir=val_dir, transform=val_transform)
 val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
