@@ -25,7 +25,7 @@ beta_step = 1000
 
 # Paths
 image_dir = '/media/ssd/congren/camelyonpatch/d02_r0p938c15/train/T_A_64'
-save_dir = "/media/ssd/congren/outputs_ssim"
+save_dir = "/media/ssd/congren/outputs_all"
 log_path = f"{save_dir}/loss_log.csv"
 
 # Transformations
@@ -70,7 +70,7 @@ def vae_loss(recon_x, x, mu, logvar, beta):
     ssim = ssim_loss(recon_x, x)
     recon_loss = mse + perceptual + ssim
     kl = kl_loss(mu, logvar)
-    return recon_loss, beta * kl_loss
+    return recon_loss, beta * kl
 
 # Output directory
 os.makedirs(save_dir, exist_ok=True)
