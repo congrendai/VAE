@@ -64,7 +64,8 @@ class Decoder(nn.Module):
             conv_transpose_block(256, 128, kernel_size=4, stride=2, padding=1),       # 16x16 → 32x32
             conv_transpose_block(128, out_channels, kernel_size=4, stride=2, padding=1, with_act=False)  # 32x32 → 64x64
         )
-        self.sigmoid = nn.Sigmoid()
+        # self.sigmoid = nn.Sigmoid()
+        self.Tanh = nn.Tanh()
 
     def forward(self, x):
         bs = x.shape[0]
@@ -74,7 +75,8 @@ class Decoder(nn.Module):
         # Pass through the transposed conv layers
         x = self.t_conv_layers(x)
         # Apply sigmoid activation to get pixel values in range [0, 1]
-        x = self.sigmoid(x)
+        # x = self.sigmoid(x)
+        x = self.Tanh(x)
         return x
 
 class VAE(nn.Module):
